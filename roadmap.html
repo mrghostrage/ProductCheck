@@ -1,0 +1,507 @@
+<title>Product Scanner Roadmap</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a single reading column styled like a product's care label: plain rows, small-caps headers, mono "source" tags under each feature. */
+:root {
+  --bg: #f5f6f4;
+  --surface: #ffffff;
+  --ink: #16191a;
+  --muted: #5a6162;
+  --line: #dde1de;
+  --accent: #2346c8;
+  --accent-soft: #e6ebfb;
+  --good: #1c7a46; --good-bg: #e3f3e9;
+  --warn: #9a5b00; --warn-bg: #fdf0da;
+  --bad: #b8321f;  --bad-bg: #fbe7e3;
+  --unk: #5a6162;  --unk-bg: #eceeed;
+  --f-display: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --f-body: "Inter", -apple-system, "Segoe UI", sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #121514; --surface: #1a1e1d; --ink: #eef1ef; --muted: #9ba3a1; --line: #2c3230;
+    --accent: #8ea6ff; --accent-soft: #1f2744;
+    --good: #6fd39a; --good-bg: #16301f; --warn: #f2b85a; --warn-bg: #33270f;
+    --bad: #ff8b77; --bad-bg: #3a1c16; --unk: #b3bab8; --unk-bg: #262b2a;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #121514; --surface: #1a1e1d; --ink: #eef1ef; --muted: #9ba3a1; --line: #2c3230;
+  --accent: #8ea6ff; --accent-soft: #1f2744;
+  --good: #6fd39a; --good-bg: #16301f; --warn: #f2b85a; --warn-bg: #33270f;
+  --bad: #ff8b77; --bad-bg: #3a1c16; --unk: #b3bab8; --unk-bg: #262b2a;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--ink);
+  font: 15.5px/1.6 var(--f-body);
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 0;
+}
+.wrap { max-width: 900px; margin: 0 auto; padding-block: 56px 96px; display: flex; flex-direction: column; gap: 56px; }
+h1, h2, h3 { font-family: var(--f-display); text-wrap: balance; margin: 0; letter-spacing: -0.01em; }
+h1 { font-size: clamp(32px, 6vw, 46px); font-weight: 800; line-height: 1.05; }
+h2 { font-size: 26px; font-weight: 800; }
+h3 { font-size: 17px; font-weight: 700; }
+p { margin: 0; }
+a { color: var(--accent); }
+a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 3px; }
+.label { font-family: var(--f-mono); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.lede { font-size: 18px; color: var(--muted); max-width: 62ch; }
+
+/* header */
+header { display: flex; flex-direction: column; gap: 16px; }
+.phase-nav { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+.phase-nav a {
+  text-decoration: none; color: var(--ink); background: var(--surface); border: 1px solid var(--line);
+  padding: 8px 14px; border-radius: 999px; font-weight: 600; font-size: 14px; display: inline-flex; gap: 8px; align-items: baseline;
+}
+.phase-nav a span { font-family: var(--f-mono); font-size: 12px; color: var(--muted); font-weight: 400; }
+.phase-nav a:hover { border-color: var(--accent); }
+
+/* section heads */
+section { display: flex; flex-direction: column; gap: 20px; }
+.sec-head { display: flex; flex-direction: column; gap: 6px; }
+.sec-head p { color: var(--muted); max-width: 64ch; }
+
+/* trust rules */
+.rules { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 12px; }
+.rules li { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.rules b { font-weight: 600; }
+.rules span { color: var(--muted); font-size: 14.5px; }
+
+/* scan flow */
+.flow { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 0; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; background: var(--surface); }
+.flow li { padding: 16px; border-right: 1px solid var(--line); display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.flow li:last-child { border-right: 0; }
+.flow .n { font-family: var(--f-mono); font-size: 12px; color: var(--accent); }
+.flow b { font-weight: 600; }
+.flow span { font-size: 14px; color: var(--muted); }
+@media (max-width: 640px) { .flow li { border-right: 0; border-bottom: 1px solid var(--line); } .flow li:last-child { border-bottom: 0; } }
+
+/* verdicts + grades */
+.two { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 18px; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.scale { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.scale li { display: grid; grid-template-columns: 150px 1fr; gap: 12px; align-items: baseline; }
+.scale li span:last-child { font-size: 14px; color: var(--muted); }
+@media (max-width: 480px) { .scale li { grid-template-columns: 1fr; gap: 2px; } }
+.pill { display: inline-block; font-size: 13px; font-weight: 600; padding: 3px 10px; border-radius: 999px; white-space: nowrap; justify-self: start; }
+.p-good { background: var(--good-bg); color: var(--good); }
+.p-warn { background: var(--warn-bg); color: var(--warn); }
+.p-bad { background: var(--bad-bg); color: var(--bad); }
+.p-unk { background: var(--unk-bg); color: var(--unk); }
+
+/* origin ladder */
+.ladder { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.ladder li { display: grid; grid-template-columns: 1fr auto; gap: 12px; padding: 9px 0; border-top: 1px dashed var(--line); align-items: baseline; }
+.ladder li:first-child { border-top: 0; }
+.ladder .q { font-family: var(--f-mono); font-size: 13px; color: var(--muted); }
+.ladder .covered { background: var(--accent-soft); margin-inline: -10px; padding-inline: 10px; border-radius: 6px; border-top-color: transparent; }
+.ladder .covered .q { color: var(--accent); font-weight: 500; }
+.ladder + li { border-top: 0; }
+.note { font-size: 13.5px; color: var(--muted); }
+.done { font-size: 14px; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; }
+.done b { font-weight: 600; }
+
+/* phases */
+.phase { scroll-margin-top: 24px; gap: 28px; }
+.phase-head { display: flex; flex-direction: column; gap: 8px; padding-top: 20px; border-top: 2px solid var(--ink); }
+.phase-head .row { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: baseline; justify-content: space-between; }
+.cat { display: flex; flex-direction: column; gap: 10px; }
+.cat > h3 { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.cat > h3 small { font-family: var(--f-mono); font-size: 12px; font-weight: 400; color: var(--muted); letter-spacing: .02em; }
+.features { list-style: none; margin: 0; padding: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
+.f { display: grid; grid-template-columns: minmax(0, 210px) minmax(0, 1fr); gap: 6px 20px; padding: 14px 16px; border-top: 1px solid var(--line); }
+.f:first-child { border-top: 0; }
+.f-name { font-weight: 600; display: flex; flex-wrap: wrap; gap: 6px; align-items: baseline; }
+.f-body { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.f-body p { color: var(--ink); font-size: 14.5px; }
+.src { font-family: var(--f-mono); font-size: 12px; color: var(--muted); }
+.src::before { content: "Source: "; }
+.src.self::before { content: ""; }
+.key { font-family: var(--f-mono); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--accent); border: 1px solid var(--accent); border-radius: 4px; padding: 0 5px; font-weight: 500; }
+@media (max-width: 640px) { .f { grid-template-columns: 1fr; } }
+
+/* not doing + money + open questions */
+.plain { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 8px; }
+.plain li { padding-left: 2px; }
+.plain b { font-weight: 600; }
+.why { color: var(--muted); }
+.costs { width: 100%; border-collapse: collapse; font-size: 14.5px; }
+.costs th, .costs td { text-align: left; padding: 9px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+.costs th { font-family: var(--f-mono); font-size: 12px; font-weight: 500; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.costs td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+.scroll { overflow-x: auto; }
+footer { color: var(--muted); font-size: 13.5px; border-top: 1px solid var(--line); padding-top: 16px; }
+@media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+</style>
+
+<div class="wrap">
+
+<header>
+  <div class="label">Product roadmap · working draft · Nov 2026</div>
+  <h1>Scan a product. See what it's really made of.</h1>
+  <p class="lede">A phone app that scans a barcode or a label, or reads a shared product link, and explains materials, origin, ingredients and safety in plain language, with a source behind every flag. It works in the store and before an online purchase. It starts with clothing and accessories, then adds cosmetics, supplements, home goods and furniture.</p>
+  <nav class="phase-nav" aria-label="Phases">
+    <a href="#launch">Launch <span>scan · label · listing</span></a>
+    <a href="#launch-plus">Launch +1 <span>safety · authenticity</span></a>
+    <a href="#next">Next <span>cosmetics · supplements · community</span></a>
+    <a href="#later">Later <span>home goods · furniture · ethics</span></a>
+  </nav>
+</header>
+
+<section>
+  <div class="sec-head">
+    <div class="label">Ground rules</div>
+    <h2>What keeps the app trustworthy</h2>
+    <p>The app makes statements about real brands. These rules apply to every feature below and are the reason people will believe it.</p>
+  </div>
+  <ul class="rules">
+    <li><b>Every flag cites a source and a date</b><span>No flag ships without a link to the record, label or rule it comes from.</span></li>
+    <li><b>Report gaps, not accusations</b><span>"Fabric origin not disclosed" is a fact. "Secretly made in China" is a lawsuit.</span></li>
+    <li><b>Brands can never pay to remove a flag</b><span>They can respond and upload proof. Money never changes a grade.</span></li>
+    <li><b>Public methodology and corrections log</b><span>Anyone can see how grades are calculated and what we fixed when we got it wrong.</span></li>
+    <li><b>No medical advice</b><span>Health and interaction flags point people to a pharmacist or doctor.</span></li>
+    <li><b>Health details stay private</b><span>Allergies, pregnancy and skin conditions stay on the phone where possible, are used only with consent, and are never sold.</span></li>
+    <li><b>No hidden affiliate links</b><span>If alternatives are ever suggested, any commercial link is clearly labeled.</span></li>
+  </ul>
+</section>
+
+<section>
+  <div class="sec-head">
+    <div class="label">Core loop</div>
+    <h2>How a scan works</h2>
+    <p>Each product only needs to be read once. After that, everyone who scans the same barcode gets the answer instantly.</p>
+  </div>
+  <ol class="flow">
+    <li><span class="n">1</span><b>Scan or share</b><span>Scan a barcode in a store, or share a product link. Known product: report right away.</span></li>
+    <li><span class="n">2</span><b>Read the source</b><span>New product: photo of the label or stamp, or the listing's text and spec photos.</span></li>
+    <li><span class="n">3</span><b>AI extracts it</b><span>Fibers, ingredients, origin, certifications and claims, as structured data.</span></li>
+    <li><span class="n">4</span><b>Run the checks</b><span>Wording, contradictions, recalls, chemicals, registry lookups.</span></li>
+    <li><span class="n">5</span><b>Save and explain</b><span>Report in plain language, stored under the barcode for the next person.</span></li>
+  </ol>
+</section>
+
+<section>
+  <div class="sec-head">
+    <div class="label">Shared vocabulary</div>
+    <h2>How results are worded</h2>
+  </div>
+  <div class="two">
+    <div class="panel">
+      <h3>Claim verdicts</h3>
+      <ul class="scale">
+        <li><span class="pill p-good">Supported</span><span>Label, registry or evidence backs the claim.</span></li>
+        <li><span class="pill p-bad">Contradicted</span><span>A source in hand says otherwise, such as the spec table or a certificate.</span></li>
+        <li><span class="pill p-warn">Misleading wording</span><span>Technically legal but implies more, like "genuine leather" or "gold tone."</span></li>
+        <li><span class="pill p-unk">Can't verify</span><span>Needs a lab test. We say so instead of guessing.</span></li>
+      </ul>
+    </div>
+    <div class="panel">
+      <h3>Origin transparency grade</h3>
+      <ul class="scale">
+        <li><span class="pill p-good">Fully disclosed</span><span>Every production stage named, ideally with a checkable certificate.</span></li>
+        <li><span class="pill p-warn">Partly disclosed</span><span>Assembly plus fabric or material origin known.</span></li>
+        <li><span class="pill p-unk">Final step only</span><span>Just a "Made in X" label.</span></li>
+        <li><span class="pill p-bad">Contradicted</span><span>Label disagrees with the brand's own supplier list or certificate.</span></li>
+      </ul>
+    </div>
+  </div>
+  <div class="panel">
+    <h3>Example: a jacket labeled "Made in Italy"</h3>
+    <ul class="ladder">
+      <li><span>Raw material</span><span class="q">not disclosed</span></li>
+      <li><span>Fabric: woven and dyed</span><span class="q">not disclosed</span></li>
+      <li><span>Components: zipper, buttons, lining</span><span class="q">not disclosed</span></li>
+      <li class="covered"><span>Cutting and sewing</span><span class="q">Italy · the only stage the label covers</span></li>
+      <li><span>Finishing</span><span class="q">not disclosed</span></li>
+    </ul>
+    <p class="note">In the EU, "Made in X" names the country of the last major processing step. Italy's stricter "100% Made in Italy" claim requires design, materials and manufacturing all in Italy.</p>
+  </div>
+</section>
+
+<!-- ===================== LAUNCH ===================== -->
+<section class="phase" id="launch">
+  <div class="phase-head">
+    <div class="row"><div class="label">Phase 1</div><div class="label">Clothing · shoes · bags · jewelry</div></div>
+    <h2>Launch: read the label or the listing, explain it</h2>
+    <p class="note">Works in a store and before an online purchase, where misleading claims do the most damage because you can't see the label yet. Built on label photos, product listings and a seeded database, so it's useful from day one.</p>
+    <p class="done"><b>Done when</b> (example targets): 1,000 weekly users, 6 in 10 scans end in a useful report, and fewer than 1 in 100 flags overturned after review.</p>
+  </div>
+
+  <div class="cat">
+    <h3>Core</h3>
+    <ul class="features">
+      <li class="f"><div class="f-name">Barcode scan</div><div class="f-body"><p>Scan any UPC or EAN. If the product is already known, the report appears instantly.</p><div class="src self">Your own shared database</div></div></li>
+      <li class="f"><div class="f-name">Label reader <span class="key">Key</span></div><div class="f-body"><p>Photo of the care label, stamp or tag. AI pulls out fiber percentages, country of origin, care instructions and any claims.</p><div class="src">Claude Haiku 5.5 vision, about 0.3¢ per new product (estimate)</div></div></li>
+      <li class="f"><div class="f-name">Listing reader <span class="key">Key</span></div><div class="f-body"><p>Share a product from Amazon, Shein, Temu, Zara or any brand site, or paste the link. AI reads the listing text and spec photos so claims are checked before you buy.</p><div class="src">The listing page, Claude Haiku 5.5</div></div></li>
+      <li class="f"><div class="f-name">Materials explained</div><div class="f-body"><p>"81% nylon, 19% elastane: synthetic, stretchy, durable, less breathable than cotton." A simple view by default, with an expert view for the chemistry.</p><div class="src self">Built-in knowledge packs per category</div></div></li>
+      <li class="f"><div class="f-name">Personal rules <span class="key">Key</span></div><div class="f-body"><p>"No polyester," "natural fibers only," "vegan," "nickel allergy," "made in EU." Every scan shows green or red against your own rules.</p><div class="src self">Stored on the phone</div></div></li>
+      <li class="f"><div class="f-name">Seeded database</div><div class="f-body"><p>Before launch, read the product pages of the top few hundred items from H&amp;M, Zara, Lululemon, Shein and similar brands, which list composition, so early scans already hit known products.</p><div class="src">Brand product pages (check each site's terms first)</div></div></li>
+    </ul>
+  </div>
+
+  <div class="cat">
+    <h3>Checks</h3>
+    <ul class="features">
+      <li class="f"><div class="f-name">Wording decoder <span class="key">Key</span></div><div class="f-body"><p>Translates sales terms into what they legally mean: gold plated or gold tone, genuine, bonded or PU leather, "cashmere feel," satin, bamboo that is really rayon, "Designed in Italy."</p><div class="src">FTC Jewelry Guides, Textile and Wool Acts, EU textile labeling rules</div></div></li>
+      <li class="f"><div class="f-name">Listing vs label contradictions <span class="key">Key</span></div><div class="f-body"><p>The listing says "100% cotton," the label or spec table says polyester. The same check covers metal, leather and origin.</p><div class="src">The listing and the label</div></div></li>
+      <li class="f"><div class="f-name">Origin breakdown</div><div class="f-body"><p>Shows which production stages the "Made in" label covers and which are unknown, then assigns the transparency grade.</p><div class="src">Label wording, brand disclosures</div></div></li>
+    </ul>
+  </div>
+
+  <div class="cat">
+    <h3>Trust and privacy <small>ship before launch</small></h3>
+    <ul class="features">
+      <li class="f"><div class="f-name">Methodology page</div><div class="f-body"><p>Exactly how each verdict and grade is calculated, in plain language.</p><div class="src self">Public page</div></div></li>
+      <li class="f"><div class="f-name">Corrections log</div><div class="f-body"><p>Every fix to a published result, with date and reason.</p><div class="src self">Public page</div></div></li>
+      <li class="f"><div class="f-name">Health profile privacy <span class="key">Key</span></div><div class="f-body"><p>Allergies, pregnancy and skin conditions are health data. Keep them on the phone where possible, ask for explicit consent, and never sell or share them. User data never goes into the business API.</p><div class="src">GDPR special category data, US state health-data laws such as Washington's My Health My Data Act</div></div></li>
+      <li class="f"><div class="f-name">Photo handling</div><div class="f-body"><p>Label photos are cropped to the label. Faces, receipts and anything else in frame are discarded, not stored.</p><div class="src self">App policy</div></div></li>
+    </ul>
+  </div>
+</section>
+
+<!-- ===================== LAUNCH +1 ===================== -->
+<section class="phase" id="launch-plus">
+  <div class="phase-head">
+    <div class="row"><div class="label">Phase 1.5</div><div class="label">Same categories</div></div>
+    <h2>Launch +1: safety and authenticity</h2>
+    <p class="note">Added once the core loop works. Each check here has known limits, so results are worded as possible matches or general information, never as findings about a specific product.</p>
+    <p class="done"><b>Done when</b>: recall and counterfeit results have been reviewed for false alarms on 200 real scans before they're switched on for everyone.</p>
+  </div>
+
+  <div class="cat">
+    <h3>Checks</h3>
+    <ul class="features">
+      <li class="f"><div class="f-name">Recall alerts</div><div class="f-body"><p>Matched by brand, product name and model number. Recall records rarely include barcodes, so results show as a possible match unless the model number matches exactly.</p><div class="src">US CPSC recalls database, EU Safety Gate</div></div></li>
+      <li class="f"><div class="f-name">Counterfeit check</div><div class="f-body"><p>Compares the company that registered the barcode with the brand on the tag. It only catches lazy fakes: most counterfeits copy the real barcode, so a match proves nothing. Resellers and store labels also cause mismatches, so a mismatch is shown as worth a closer look, never as proof.</p><div class="src">GS1 barcode registry (lookups are rate-limited)</div></div></li>
+      <li class="f"><div class="f-name">Chemical information</div><div class="f-body"><p>General information for the category unless test data exists for that exact product: "Water-repellent finishes often use PFAS. This brand says PFAS-free: yes / not stated." Covers PFAS, BPA in polyester-spandex, lead and cadmium in cheap jewelry, nickel, and formaldehyde finishes.</p><div class="src">State PFAS rules, published test results, brand statements</div></div></li>
+      <li class="f"><div class="f-name">Gold value floor</div><div class="f-body"><p>For "solid gold" claims: weight × purity × today's gold price. A 10 g "solid 14K" chain priced at $39 can't be solid gold.</p><div class="src">Live gold spot price</div></div></li>
+    </ul>
+  </div>
+</section>
+
+<!-- ===================== NEXT ===================== -->
+<section class="phase" id="next">
+  <div class="phase-head">
+    <div class="row"><div class="label">Phase 2</div><div class="label">Cosmetics · supplements · food · community</div></div>
+    <h2>Next: new categories and the community</h2>
+    <p class="note">Cosmetics and food come first because open databases already cover millions of barcodes. Community features arrive once there are enough users to fill them.</p>
+    <p class="done"><b>Done when</b> (example targets): cosmetics and supplement scans reach the same useful-report rate as clothing, and the first 20 brands have claimed their pages.</p>
+  </div>
+
+  <div class="cat">
+    <h3>Cosmetics</h3>
+    <ul class="features">
+      <li class="f"><div class="f-name">Ingredient decoder <span class="key">Key</span></div><div class="f-body"><p>Explains each ingredient on the list and flags ones restricted in the EU but allowed in the US.</p><div class="src">Open Beauty Facts (share-alike license, kept separate), EU cosmetics ingredient database (CosIng)</div></div></li>
+      <li class="f"><div class="f-name">Unregulated buzzwords</div><div class="f-body"><p>"Clean," "non-toxic," "hypoallergenic," "dermatologist tested" have no legal definition in the US. Shown as marketing.</p><div class="src self">Knowledge pack</div></div></li>
+      <li class="f"><div class="f-name">Fragrance and allergens</div><div class="f-body"><p>"Parfum" can hide many chemicals. Flags declared allergens for sensitive skin.</p><div class="src">EU fragrance allergen labeling list</div></div></li>
+      <li class="f"><div class="f-name">Skin profile</div><div class="f-body"><p>Acne-prone, pregnant, sensitive, fragrance-free. Personal rules applied to ingredients.</p><div class="src self">Stored per user</div></div></li>
+      <li class="f"><div class="f-name">Cruelty-free check</div><div class="f-body"><p>Looks the brand up instead of trusting a bunny logo the brand drew itself.</p><div class="src">Leaping Bunny brand database</div></div></li>
+      <li class="f"><div class="f-name">Reef-safe and expiry</div><div class="f-body"><p>Checks "reef-safe" against banned sunscreen ingredients. Decodes the open-jar symbol and batch code.</p><div class="src">Hawaii sunscreen ingredient ban, label symbols</div></div></li>
+      <li class="f"><div class="f-name">Label translation</div><div class="f-body"><p>Korean, Japanese and Chinese labels translated and explained.</p><div class="src">Claude vision</div></div></li>
+    </ul>
+  </div>
+
+  <div class="cat">
+    <h3>Supplements</h3>
+    <ul class="features">
+      <li class="f"><div class="f-name">Dose reality check <span class="key">Key</span></div><div class="f-body"><p>"Contains 50 mg of ashwagandha. Studies used 300 to 600 mg." Every dose comes from an evidence table reviewed by someone qualified, never from the AI's memory.</p><div class="src">NIH Office of Dietary Supplements, published studies, reviewed in-house</div></div></li>
+      <li class="f"><div class="f-name">Tainted product list <span class="key">Key</span></div><div class="f-body"><p>Flags products the FDA found with hidden drugs, most often in weight-loss and "male enhancement" supplements.</p><div class="src">FDA tainted supplements database</div></div></li>
+      <li class="f"><div class="f-name">Proprietary blends</div><div class="f-body"><p>Flags "Energy Blend 800 mg" style labels that hide how much of each ingredient is inside.</p><div class="src">Supplement Facts panel</div></div></li>
+      <li class="f"><div class="f-name">Third-party testing</div><div class="f-body"><p>Verifies NSF Certified for Sport and USP Verified claims against the certifiers' lists.</p><div class="src">NSF and USP public databases</div></div></li>
+      <li class="f"><div class="f-name">Upper limits and athlete mode</div><div class="f-body"><p>Warns when a dose passes the safe upper limit (vitamin A, iron, B6). Optional banned-in-sport flags.</p><div class="src">NIH upper intake levels, anti-doping lists</div></div></li>
+      <li class="f"><div class="f-name">Interaction flags</div><div class="f-body"><p>"St. John's wort can interact with birth control. Ask a pharmacist." A flag only, never advice.</p><div class="src">NIH fact sheets</div></div></li>
+    </ul>
+  </div>
+
+  <div class="cat">
+    <h3>Food <small>low effort to add</small></h3>
+    <ul class="features">
+      <li class="f"><div class="f-name">Food scan</div><div class="f-body"><p>Ingredients, additives and nutrition from an existing open database, with the same claim checks. Kept in a separate store from your own data because of its share-alike license.</p><div class="src">Open Food Facts (ODbL license)</div></div></li>
+    </ul>
+  </div>
+
+  <div class="cat">
+    <h3>Community</h3>
+    <ul class="features">
+      <li class="f"><div class="f-name">Reviews per barcode <span class="key">Key</span></div><div class="f-body"><p>Focused on what product pages never say: "pilled after 3 washes," "peeled in 6 months," "shrank a size." Photos after months of wear. Moderated, with a takedown and dispute process.</p><div class="src self">Users</div></div></li>
+      <li class="f"><div class="f-name">Report a misleading claim</div><div class="f-body"><p>Reports add up per product, with a one-tap path to file with the FTC or an EU consumer authority.</p><div class="src self">Users</div></div></li>
+      <li class="f"><div class="f-name">Shrinkflation tracker</div><div class="f-body"><p>"Was 200 ml, now 170 ml, same price." Built automatically from repeat scans of the same barcode.</p><div class="src self">Scan history</div></div></li>
+    </ul>
+  </div>
+
+  <div class="cat">
+    <h3>Brand responses</h3>
+    <ul class="features">
+      <li class="f"><div class="f-name">Claim your brand page <span class="key">Key</span></div><div class="f-body"><p>Brands reply next to a flag and upload proof such as supplier lists or certificates. A person checks every document and confirms certificates with the issuer, because fake certificates exist. Verified proof earns a badge and can raise the transparency grade.</p><div class="src self">Brand uploads, checked by us</div></div></li>
+      <li class="f"><div class="f-name">"Brand fixed this" history</div><div class="f-body"><p>When a brand corrects a listing or label, the change is shown publicly with its date.</p><div class="src self">Change log</div></div></li>
+    </ul>
+  </div>
+
+  <div class="cat">
+    <h3>Across every category</h3>
+    <ul class="features">
+      <li class="f"><div class="f-name">Regulator and lawsuit history <span class="key">Key</span></div><div class="f-body"><p>"This brand received an FDA warning letter in 2025 for unproven claims," with the record linked.</p><div class="src">FDA warning letters, FTC cases, EU Safety Gate, class action trackers</div></div></li>
+      <li class="f"><div class="f-name">Greenwashing detector</div><div class="f-body"><p>Flags vague claims like "eco," "conscious" or "planet-friendly" with nothing behind them. EU rules against unproven generic environmental claims have applied since 27 September 2026.</p><div class="src">EU consumer rules, FTC Green Guides</div></div></li>
+      <li class="f"><div class="f-name">Side-by-side compare</div><div class="f-body"><p>Scan two products in the store and see them next to each other.</p><div class="src self">Scan results</div></div></li>
+      <li class="f"><div class="f-name">Cost per use</div><div class="f-body"><p>Cost per wear for clothes, per effective dose for supplements, per ml for cosmetics.</p><div class="src self">Price entered or scanned</div></div></li>
+    </ul>
+  </div>
+</section>
+
+<!-- ===================== LATER ===================== -->
+<section class="phase" id="later">
+  <div class="phase-head">
+    <div class="row"><div class="label">Phase 3</div><div class="label">Home goods · furniture · ethics · more</div></div>
+    <h2>Later: home goods, bigger items and supply chains</h2>
+    <p class="note">Home goods come first because their health claims are certified to numbered standards, model by model, in public registries, so most claims can be checked rather than marked "can't verify." Furniture is often bought online and has fewer barcodes in stores, so it relies more on label photos and listing links.</p>
+    <p class="done"><b>Done when</b>: each new category meets the launch quality bar before the next one starts.</p>
+  </div>
+
+  <div class="cat">
+    <h3>Home goods with health claims <small>water filters · air purifiers · kitchenware · cleaners</small></h3>
+    <ul class="features">
+      <li class="f"><div class="f-name">Model number first <span class="key">Key</span></div><div class="f-body"><p>Certifications are listed per model, not per brand or barcode, so the label and listing readers pull out the model number, certified standards, each contaminant with its reduction percentage, and rated capacity.</p><div class="src">Product box, Performance Data Sheet, listing specs</div></div></li>
+      <li class="f"><div class="f-name">Filter certification <span class="key">Key</span></div><div class="f-body"><p>Checks each claim against the model's listing. "Reduces lead" needs NSF/ANSI 53, PFOA/PFOS needs 473, and drug residues need 401; 42 covers only taste and odor. Catches the same brand selling filters with different certifications, like a basic pitcher filter that isn't certified for lead while the brand's premium filter is.</p><div class="src">NSF, WQA Gold Seal and IAPMO certification listings (check terms before bulk lookups)</div></div></li>
+      <li class="f"><div class="f-name">Performance Data Sheet reader</div><div class="f-body"><p>Reads the table of contaminants, reduction percentages and gallons per filter that certified models must provide. Gives cost per gallon and filter-change reminders.</p><div class="src">Manufacturer data sheet, Claude vision</div></div></li>
+      <li class="f"><div class="f-name">Wording decoder for home goods</div><div class="f-body"><p>"Tested to NSF standards" and "meets NSF 53" are not certification. "Removes 99% of contaminants" doesn't say which ones. "HEPA-type" is not true HEPA. "PFOA-free" cookware means little now that PFOA has been phased out in the US; "PTFE-free" is the claim that matters. "Alkaline," "structured" and "non-toxic" have no standard behind them.</p><div class="src">Certifier mark-use rules, US DOE HEPA definition, EPA PFOA stewardship program</div></div></li>
+      <li class="f"><div class="f-name">Fake replacement filters</div><div class="f-body"><p>Fridge and pitcher filters are commonly counterfeited. The same barcode-owner check from Phase 1.5, plus a check that the certification listing names this exact model and seller's part number.</p><div class="src">GS1 barcode registry, certification listings</div></div></li>
+      <li class="f"><div class="f-name">Air purifier checks</div><div class="f-body"><p>Verifies the clean-air delivery rate (CADR) and room size claims. Flags purifiers missing from California's list of models certified for low ozone output.</p><div class="src">AHAM Verifide directory, California Air Resources Board air cleaner list</div></div></li>
+      <li class="f"><div class="f-name">Kitchenware and containers</div><div class="f-body"><p>Nonstick coatings, "BPA-free" claims, and lead in imported aluminum cookware and drinkware parts. Shown as general information unless test data exists for that product.</p><div class="src">FDA import alerts and warnings, published test results, brand statements</div></div></li>
+      <li class="f"><div class="f-name">Antibacterial and cleaner claims</div><div class="f-body"><p>Products that claim to kill germs, like silver-treated filters, generally need EPA registration; a missing EPA number is a flag. Cleaners can be checked against the Safer Choice list.</p><div class="src">EPA pesticide registration rules (FIFRA), EPA Safer Choice database</div></div></li>
+    </ul>
+  </div>
+
+  <div class="cat">
+    <h3>Furniture</h3>
+    <ul class="features">
+      <li class="f"><div class="f-name">Real material <span class="key">Key</span></div><div class="f-body"><p>Solid wood vs veneer vs particleboard. "Genuine" vs bonded leather on sofas.</p><div class="src self">Knowledge pack, listing specs</div></div></li>
+      <li class="f"><div class="f-name">Formaldehyde label</div><div class="f-body"><p>Composite wood sold in the US must carry a compliance label. Missing label is a flag.</p><div class="src">EPA TSCA Title VI rule</div></div></li>
+      <li class="f"><div class="f-name">Flame retardants</div><div class="f-body"><p>California-compliant upholstery is labeled with whether flame retardants were added. The app reads that label.</p><div class="src">California TB 117-2013 label</div></div></li>
+      <li class="f"><div class="f-name">Tip-over safety</div><div class="f-body"><p>Checks dressers against the US anti-tip standard. Important for parents.</p><div class="src">CPSC clothing storage unit standard</div></div></li>
+      <li class="f"><div class="f-name">Fabric durability</div><div class="f-body"><p>Explains "double rubs": 15,000 is light use, 50,000 and up is heavy duty.</p><div class="src">Wyzenbeek and Martindale test ratings</div></div></li>
+      <li class="f"><div class="f-name">Certification lookups</div><div class="f-body"><p>Verifies wood sourcing and low-emission claims.</p><div class="src">FSC and GREENGUARD databases</div></div></li>
+    </ul>
+  </div>
+
+  <div class="cat">
+    <h3>Online extras</h3>
+    <ul class="features">
+      <li class="f"><div class="f-name">Ad and store checker</div><div class="f-body"><p>The existing prototype: domain age, when the site went live, store age from its catalog, fake "was" prices, pressure tactics, policy red flags.</p><div class="src">RDAP, certificate logs, the store's own pages</div></div></li>
+      <li class="f"><div class="f-name">Browser extension</div><div class="f-body"><p>The report alongside any product page on desktop.</p><div class="src self">Same backend</div></div></li>
+    </ul>
+  </div>
+
+  <div class="cat">
+    <h3>Supply chain and ethics</h3>
+    <ul class="features">
+      <li class="f"><div class="f-name">Factory lookups</div><div class="f-body"><p>Connects brands to their disclosed factories to fill in the origin breakdown.</p><div class="src">Open Supply Hub, brand supplier lists</div></div></li>
+      <li class="f"><div class="f-name">Traceable labels</div><div class="f-body"><p>Looks up label IDs that list the facility for each production stage.</p><div class="src">OEKO-TEX Made in Green, Leather Working Group, GOTS</div></div></li>
+      <li class="f"><div class="f-name">Digital Product Passport</div><div class="f-body"><p>Reads the supply-chain QR codes the EU is phasing in, starting with textiles in the next few years.</p><div class="src">EU ecodesign rules</div></div></li>
+      <li class="f"><div class="f-name">Forced-labor risk</div><div class="f-body"><p>Flags when a brand's disclosed suppliers appear on the US government's forced-labor entity list.</p><div class="src">US DHS UFLPA Entity List</div></div></li>
+      <li class="f"><div class="f-name">Import records</div><div class="f-body"><p>For larger brands, which countries and factories ship to them.</p><div class="src">US customs bills of lading</div></div></li>
+    </ul>
+  </div>
+
+  <div class="cat">
+    <h3>More categories and features</h3>
+    <ul class="features">
+      <li class="f"><div class="f-name">Electronics</div><div class="f-body"><p>Energy labels and repairability scores.</p><div class="src">EU EPREL database, France repairability index</div></div></li>
+      <li class="f"><div class="f-name">Kids mode</div><div class="f-body"><p>Toys and children's products: choking hazards, lead, recalls.</p><div class="src">CPSC, EU Safety Gate</div></div></li>
+      <li class="f"><div class="f-name">Pets</div><div class="f-body"><p>Pet food ingredients and recalls.</p><div class="src">Open Pet Food Facts, FDA pet food recalls</div></div></li>
+      <li class="f"><div class="f-name">Fair price check</div><div class="f-body"><p>"Similar items with the same fabric cost $20 to $35." Needs enough scans to compare against.</p><div class="src self">Scan history</div></div></li>
+      <li class="f"><div class="f-name">My closet</div><div class="f-body"><p>Everything scanned or bought, cost per wear, overall material mix, microplastic care tips.</p><div class="src self">Stored per user</div></div></li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head">
+    <div class="label">Risks</div>
+    <h2>Risks to manage</h2>
+  </div>
+  <ul class="plain">
+    <li><b>Open-database licenses.</b> <span class="why">Open Food Facts and Open Beauty Facts use ODbL, a share-alike license. Merging their data into your own published database could require releasing it under the same license. Keep their data separate, and check certifier and retailer terms before any bulk use.</span></li>
+    <li><b>AI getting facts wrong.</b> <span class="why">Extracted claims are checked against the source text. Anything stated as evidence, such as doses or legal definitions, comes from reviewed tables, not the AI's memory.</span></li>
+    <li><b>Brand verification workload.</b> <span class="why">Someone has to check documents and confirm certificates with issuers. Budget for it before opening brand pages.</span></li>
+    <li><b>User reviews.</b> <span class="why">Needs moderation and a takedown and dispute process, separate from the app's own flags.</span></li>
+    <li><b>False alarms.</b> <span class="why">Counterfeit and recall matches stay "possible" until confirmed. Test them on real scans before turning them on.</span></li>
+  </ul>
+</section>
+
+<section>
+  <div class="sec-head">
+    <div class="label">Decisions</div>
+    <h2>Not doing</h2>
+  </div>
+  <ul class="plain">
+    <li><b>Reverse image search.</b> <span class="why">Dropped. Paid per search and not needed now that labels and barcodes are the input.</span></li>
+    <li><b>Per-item carbon footprint numbers.</b> <span class="why">The data is too weak; the app would be greenwashing itself.</span></li>
+    <li><b>Paid flag removal or paid better scores.</b> <span class="why">The day this exists, the app is worthless.</span></li>
+    <li><b>Licensing other companies' ratings.</b> <span class="why">Costly and creates dependence. Build grades from public sources instead.</span></li>
+    <li><b>Unlabeled affiliate links.</b> <span class="why">Undercuts the trust everything else depends on.</span></li>
+  </ul>
+</section>
+
+<section>
+  <div class="sec-head">
+    <div class="label">Business</div>
+    <h2>Money and running costs</h2>
+  </div>
+  <div class="two">
+    <div class="panel">
+      <h3>Revenue</h3>
+      <ul class="plain">
+        <li><b>Premium for users:</b> personal rules, closet, unlimited scans.</li>
+        <li><b>Brand verification fees:</b> paid for the work of checking documents, never for the score.</li>
+        <li><b>Business API:</b> resellers and small retailers screen products before stocking them.</li>
+      </ul>
+    </div>
+    <div class="panel">
+      <h3>Running costs (estimates)</h3>
+      <div class="scroll">
+        <table class="costs">
+          <thead><tr><th>Item</th><th>Cost</th></tr></thead>
+          <tbody>
+            <tr><td>AI label reading, new product</td><td class="num">≈ $0.003</td></tr>
+            <tr><td>AI listing reading, new product</td><td class="num">≈ $0.005</td></tr>
+            <tr><td>Repeat scan of a known barcode</td><td class="num">≈ $0</td></tr>
+            <tr><td>Harder judgment calls on a bigger model (≈1 in 10)</td><td class="num">≈ $0.06</td></tr>
+            <tr><td>Public databases listed above</td><td class="num">mostly free</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note">Measure on real labels before launch. Caching by barcode means each product is read once.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head">
+    <div class="label">To decide</div>
+    <h2>Open questions</h2>
+  </div>
+  <ul class="plain">
+    <li><b>Name.</b> <span class="why">"Product Scanner" is a placeholder.</span></li>
+    <li><b>Launch market: US or EU first?</b> <span class="why">Labeling rules, recall databases and origin rules differ, so the knowledge packs differ too.</span></li>
+    <li><b>Mobile stack.</b> <span class="why">Native app for scanning and camera, or a phone-friendly web app to test first.</span></li>
+    <li><b>How far to seed.</b> <span class="why">Which brands and how many products to read before launch, and which sites' terms allow it.</span></li>
+    <li><b>Legal review.</b> <span class="why">Have a lawyer review the verdict wording and methodology before public launch.</span></li>
+  </ul>
+</section>
+
+<footer>
+  Working draft. Laws and databases named here should be confirmed before building each feature. Cost figures are estimates.
+</footer>
+
+</div>

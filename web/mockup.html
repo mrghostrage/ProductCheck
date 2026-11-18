@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Product Page Mockup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@700;800&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="style.css">
+<style>
+/* ---- Mockup-only additions, built on the tokens in style.css ---- */
+.wrap { gap: 28px; }
+
+/* Top bar */
+.topbar { align-items: center; }
+.topbar nav { align-items: center; }
+.topbar nav a { color: var(--muted); text-decoration: none; }
+.topbar nav a:hover { color: var(--ink); text-decoration: underline; }
+.badge { font-family: var(--f-mono); font-size: 11px; letter-spacing: .06em; text-transform: uppercase;
+  color: var(--muted); border: 1px dashed var(--line); border-radius: 999px; padding: 2px 9px; }
+
+/* Compact hero once a report is showing */
+.hero h1 { font-size: clamp(26px, 5vw, 32px); }
+.hero .lede { font-size: 15.5px; }
+
+/* Segmented control */
+.seg { display: inline-flex; background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 3px; gap: 2px; align-self: flex-start; max-width: 100%; overflow-x: auto; }
+.seg button { background: transparent; color: var(--muted); padding: 6px 12px; font-weight: 500; font-size: 14px; border-radius: 7px; white-space: nowrap; }
+@media (max-width: 480px) {
+  .seg { align-self: stretch; }
+  .seg button { flex: 1; padding: 6px 4px; font-size: 13.5px; }
+}
+.seg button[aria-selected=true] { background: var(--surface); color: var(--ink); box-shadow: 0 1px 2px rgb(0 0 0 / .08), 0 0 0 1px var(--line); }
+
+/* Demo product cards */
+.demos { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+@media (max-width: 560px) { .demos { grid-template-columns: 1fr; } }
+.demo { display: grid; grid-template-columns: 36px 1fr; gap: 2px 10px; align-items: center; text-align: left;
+  background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; font-weight: 400; }
+.demo:hover { border-color: var(--muted); }
+.demo[aria-pressed=true] { border-color: var(--ink); box-shadow: inset 0 0 0 1px var(--ink); }
+.demo .ic { grid-row: span 2; width: 36px; height: 36px; border-radius: 8px; background: var(--bg); display: grid; place-items: center; color: var(--muted); }
+.demo .nm { font-weight: 600; font-size: 14px; line-height: 1.3; }
+.demo .tz { font-size: 12.5px; line-height: 1.3; }
+.tz.bad { color: var(--bad); } .tz.warn { color: var(--warn); } .tz.good { color: var(--good); }
+
+/* Verdict block */
+.verdict { position: relative; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 22px 22px 20px 26px; overflow: hidden; display: flex; flex-direction: column; gap: 12px; }
+.verdict::before { content: ""; position: absolute; inset: 0 auto 0 0; width: 6px; background: var(--bad); }
+.verdict .top { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; flex-wrap: wrap; }
+.verdict h2 { font-size: 20px; font-weight: 700; }
+.verdict .headline { font-family: var(--f-display); font-weight: 800; font-size: clamp(26px, 5.4vw, 34px); line-height: 1.1; letter-spacing: -0.015em; color: var(--bad); text-wrap: balance; }
+.verdict .say { font-size: 16.5px; max-width: 58ch; }
+.verdict .foot { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; padding-top: 4px; }
+button.ghost { background: transparent; color: var(--ink); border: 1px solid var(--line); padding: 7px 12px; font-size: 13.5px; font-weight: 500; display: inline-flex; gap: 6px; align-items: center; }
+button.ghost:hover { border-color: var(--muted); }
+
+/* Section headings */
+.sec-h { display: flex; flex-direction: column; gap: 2px; }
+.sec-h h3 { font-size: 20px; font-weight: 800; }
+.sec-row { display: flex; justify-content: space-between; align-items: flex-end; gap: 10px; flex-wrap: wrap; }
+
+/* Side-by-side contradiction */
+.compare { display: grid; grid-template-columns: 1fr auto 1fr; border: 1px solid color-mix(in srgb, var(--bad) 35%, var(--line)); border-radius: 12px; overflow: hidden; background: var(--bad-bg); }
+.compare .side { padding: 16px 18px; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.compare .side + .neq + .side { text-align: right; }
+.compare .val { font-family: var(--f-display); font-weight: 800; font-size: clamp(19px, 4.4vw, 26px); line-height: 1.15; }
+.compare .neq { display: grid; place-items: center; padding: 0 4px; }
+.compare .neq span { width: 34px; height: 34px; border-radius: 50%; background: var(--surface); color: var(--bad); display: grid; place-items: center; font-size: 20px; font-weight: 700; border: 1px solid color-mix(in srgb, var(--bad) 35%, var(--line)); }
+.compare-note { font-size: 14px; color: var(--muted); }
+
+/* Claims with pull-quote */
+.claim { display: flex; flex-direction: column; gap: 6px; padding: 14px 0; border-top: 1px solid var(--line); }
+.claim:first-child { border-top: 0; padding-top: 2px; }
+.claim .top { display: flex; justify-content: space-between; gap: 10px; align-items: flex-start; flex-wrap: wrap; }
+.claim blockquote { margin: 0; padding-left: 12px; border-left: 3px solid var(--line); font-weight: 600; font-size: 16px; }
+.claim.c-contradicted blockquote { border-left-color: var(--bad); }
+.claim.c-misleading blockquote { border-left-color: var(--warn); }
+
+/* Origin stepper */
+.disclosed { display: flex; align-items: center; gap: 10px; font-size: 14px; }
+.meter { display: inline-flex; gap: 3px; }
+.meter i { width: 18px; height: 6px; border-radius: 3px; background: var(--line); }
+.meter i.on { background: var(--accent); }
+.steps { list-style: none; margin: 4px 0 0; padding: 0; }
+.steps li { display: grid; grid-template-columns: 22px 1fr auto; gap: 12px; align-items: start; position: relative; padding-bottom: 16px; }
+.steps li:last-child { padding-bottom: 0; }
+.steps li::before { content: ""; position: absolute; left: 10px; top: 18px; bottom: -2px; width: 2px; background: var(--line); }
+.steps li:last-child::before { display: none; }
+.steps .dot { width: 22px; height: 22px; border-radius: 50%; border: 2px dashed var(--line); background: var(--surface); position: relative; z-index: 1; }
+.steps .known .dot { border: 0; background: var(--accent); box-shadow: 0 0 0 4px var(--accent-soft); }
+.steps .st { line-height: 22px; }
+.steps .known .st { font-weight: 600; }
+.steps .c { font-family: var(--f-mono); font-size: 13px; color: var(--muted); line-height: 22px; text-align: right; }
+.steps .known .c { color: var(--accent); font-weight: 500; }
+.steps .basis { grid-column: 2 / -1; margin-top: -8px; }
+
+/* Material bars */
+.part { display: flex; flex-direction: column; gap: 8px; padding: 14px 0; border-top: 1px solid var(--line); }
+.part:first-of-type { border-top: 0; padding-top: 2px; }
+.bar { display: flex; height: 10px; border-radius: 5px; overflow: hidden; background: var(--line); }
+.bar .n { background: var(--good); } .bar .p { background: var(--warn); }
+.legend { display: flex; gap: 14px; font-size: 12.5px; color: var(--muted); }
+.legend i { display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin-right: 5px; vertical-align: 0; }
+.mat { border-top: 0; padding: 0; }
+.mat .pct { font-size: 14px; }
+
+/* Sources */
+.chips { display: flex; gap: 6px; flex-wrap: wrap; }
+.chip { font-family: var(--f-mono); font-size: 12px; border: 1px solid var(--line); border-radius: 6px; padding: 3px 8px; color: var(--muted); background: var(--surface); }
+
+/* Design notes (mockup only) */
+.note { display: flex; gap: 8px; align-items: flex-start; font-size: 13px; color: var(--accent); background: var(--accent-soft); border: 1px dashed var(--accent); border-radius: 8px; padding: 7px 10px; }
+.note b { flex: none; width: 18px; height: 18px; border-radius: 50%; background: var(--accent); color: var(--surface); display: grid; place-items: center; font-size: 11px; margin-top: 1px; }
+body.no-notes .note { display: none; }
+.mock-bar { position: sticky; top: 0; z-index: 5; background: var(--ink); color: var(--bg); font-size: 13px; padding: 8px 16px; margin: 0 calc(-1 * max(16px, env(safe-area-inset-left, 0px))); display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+.mock-bar button { background: var(--bg); color: var(--ink); padding: 4px 10px; font-size: 12.5px; }
+</style>
+</head>
+<body>
+<div class="mock-bar"><span>Mockup · product page redesign · Leather Tote demo data</span><button type="button" id="toggle-notes">Hide design notes</button></div>
+<div class="wrap">
+  <div class="topbar">
+    <a class="brand" href="/">Product Scanner</a>
+    <nav><span class="badge" title="No AI key on the server: results use example data">Sample data</span><a href="/methodology">How we check</a><a href="/corrections">Corrections</a></nav>
+  </div>
+
+  <header class="prose hero">
+    <h1>See what it's really made of.</h1>
+    <p class="lede">Paste a listing link, upload a screenshot, or snap the care label. Every flag shows its source.</p>
+  </header>
+
+  <section class="panel" aria-label="Check a product">
+    <div class="seg" role="tablist">
+      <button role="tab" aria-selected="true">Paste a link</button>
+      <button role="tab" aria-selected="false">Upload photo</button>
+      <button role="tab" aria-selected="false">Barcode</button>
+    </div>
+    <form class="row" onsubmit="return false">
+      <input type="text" placeholder="Paste a product link from any store" aria-label="Product link">
+      <button type="submit">Check</button>
+    </form>
+    <div class="label">Or try a demo product</div>
+    <div class="demos">
+      <button class="demo" type="button" aria-pressed="true">
+        <span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8h14l-1 12H6L5 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg></span>
+        <span class="nm">Leather Tote</span><span class="tz bad">2 problems</span>
+      </button>
+      <button class="demo" type="button">
+        <span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3 3 6l2 5 3-1v11h8V10l3 1 2-5-5-3a4 4 0 0 1-8 0z"/></svg></span>
+        <span class="nm">Everyday Tee</span><span class="tz warn">Wording to check</span>
+      </button>
+      <button class="demo" type="button">
+        <span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="14" r="6"/><path d="M8 4h8l-2 4h-4z"/></svg></span>
+        <span class="nm">Gold Chain Necklace</span><span class="tz">Stamps decoded</span>
+      </button>
+    </div>
+  </section>
+  <div class="note"><b>4</b><span>Demo products always visible as cards (not hidden behind the Barcode tab). Tabs become one segmented control so they don't compete with "Check".</span></div>
+
+  <div class="report">
+    <!-- 1. Verdict -->
+    <section class="verdict" aria-label="Summary">
+      <div class="top">
+        <div>
+          <div class="label">Demo Brand · Bag · Barcode 2000000000046</div>
+          <h2>Leather Tote</h2>
+        </div>
+        <div class="counts"><span class="pill v-contradicted">1 Contradicted</span><span class="pill v-misleading">1 Misleading</span></div>
+      </div>
+      <div class="headline">2 problems with this listing</div>
+      <p class="say">It's sold as <b>Made in Italy</b>, but the care label says <b>China</b>. "Genuine leather" is also a vague grade, often used for lower-quality split leather.</p>
+      <div class="foot">
+        <span class="src">Checked against the care label and the listing · read Nov 18, 2026</span>
+        <button class="ghost" type="button"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 14a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1"/><path d="M14 10a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/></svg>Copy link</button>
+      </div>
+    </section>
+    <div class="note"><b>1</b><span>Verdict first: one headline and one sentence answer "can I trust this listing?". The colored edge follows the worst finding (red / amber / green).</span></div>
+
+    <!-- 2. Contradiction -->
+    <section>
+      <div class="sec-h"><div class="label">Doesn't add up</div><h3>Origin doesn't match</h3></div>
+      <div class="compare">
+        <div class="side"><span class="label">Listing says</span><span class="val">Made in Italy</span><span class="src">Store product page</span></div>
+        <div class="neq" aria-label="does not match"><span>≠</span></div>
+        <div class="side"><span class="label">Label says</span><span class="val">Made in China</span><span class="src">Sewn-in care label</span></div>
+      </div>
+      <p class="compare-note">The care label is attached to the product itself; the listing is the store's description.</p>
+    </section>
+    <div class="note"><b>2</b><span>The two sources sit side by side, so the mismatch reads in one glance. This is the most shareable view.</span></div>
+
+    <!-- Claims -->
+    <section class="panel">
+      <div class="sec-h"><div class="label">From the listing</div><h3>Claims checked</h3></div>
+      <div>
+        <div class="claim c-contradicted">
+          <div class="top"><blockquote>“Made in Italy”</blockquote><span class="pill v-contradicted">Contradicted</span></div>
+          <span>Claim says Italy; the label says China.</span>
+          <span class="src">Source: Care label</span>
+        </div>
+        <div class="claim c-misleading">
+          <div class="top"><blockquote>“Genuine leather tote”</blockquote><span class="pill v-misleading">Misleading wording</span></div>
+          <span>Real leather, but not a grade. It's often used for lower-quality split leather. Full-grain and top-grain are the higher grades.</span>
+          <span class="src">Source: FTC Guides for Select Leather and Imitation Leather Products (16 CFR Part 24)</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Origin -->
+    <section class="panel">
+      <div class="sec-row">
+        <div class="sec-h"><div class="label">Supply chain</div><h3>Where it's made</h3></div>
+        <span class="pill g-contradicted">Contradicted</span>
+      </div>
+      <div class="disclosed"><span class="meter" aria-hidden="true"><i></i><i></i><i></i><i class="on"></i><i></i></span><span><b>1 of 5 steps disclosed</b> <span class="muted">· the other 4 are unknown</span></span></div>
+      <ol class="steps">
+        <li><span class="dot"></span><span class="st">Raw material</span><span class="c">not disclosed</span></li>
+        <li><span class="dot"></span><span class="st">Fabric or main material</span><span class="c">not disclosed</span></li>
+        <li><span class="dot"></span><span class="st">Components (zippers, buttons, soles)</span><span class="c">not disclosed</span></li>
+        <li class="known"><span class="dot"></span><span class="st">Cutting, sewing or assembly</span><span class="c">China</span><span class="src basis">“Made in China” · care label</span></li>
+        <li><span class="dot"></span><span class="st">Finishing</span><span class="c">not disclosed</span></li>
+      </ol>
+      <p class="muted" style="font-size:14px">“Made in China” names where the product was last substantially changed, usually where it was cut and sewn. It says nothing about where the leather came from.</p>
+    </section>
+    <div class="note"><b>3</b><span>The origin list becomes a stepper with a disclosure meter: hollow dots make "4 of 5 steps hidden" visible without reading.</span></div>
+
+    <!-- Materials -->
+    <section class="panel">
+      <div class="sec-h"><div class="label">From the care label</div><h3>What it's made of</h3></div>
+      <div class="legend"><span><i style="background:var(--good)"></i>Natural</span><span><i style="background:var(--warn)"></i>Plastic-based</span></div>
+      <div>
+        <div class="part">
+          <div class="sec-row"><span class="label">Main</span><span class="src">100% natural</span></div>
+          <div class="bar" role="img" aria-label="100% natural"><span class="n" style="width:100%"></span></div>
+          <div class="mat"><span class="pct">100%</span><span><b>Leather</b><br><span class="muted">Animal hide. Grade matters: full-grain is best; "genuine leather" is real but often lower-grade split leather.</span></span></div>
+        </div>
+        <div class="part">
+          <div class="sec-row"><span class="label">Lining</span><span class="src">100% plastic-based</span></div>
+          <div class="bar" role="img" aria-label="100% plastic-based"><span class="p" style="width:100%"></span></div>
+          <div class="mat"><span class="pct">100%</span><span><b>Polyester</b><br><span class="muted">Plastic fiber. Durable, quick-drying and cheap, less breathable, sheds microplastics in the wash.</span></span></div>
+        </div>
+      </div>
+    </section>
+    <div class="note"><b>3</b><span>Each part gets a composition bar, so a 60/40 blend is visible before you read the rows.</span></div>
+
+    <!-- Sources -->
+    <section>
+      <div class="label">Based on</div>
+      <div class="chips"><span class="chip">Care label · Nov 18, 2026</span><span class="chip">Listing · Nov 18, 2026</span></div>
+      <p class="muted" style="font-size:14px">Demo product: made-up example data for testing the app.</p>
+    </section>
+  </div>
+  <div class="note"><b>5</b><span>Hierarchy: section headings go from 16px to 20px with a mono overline; cards are ordered by severity; the amber sample-mode banner becomes a quiet "Sample data" badge in the top bar.</span></div>
+
+  <footer><span>Product Scanner · working prototype</span><a href="/methodology">How we check</a><a href="/corrections">Corrections</a></footer>
+</div>
+<script>
+document.getElementById("toggle-notes").addEventListener("click", (e) => {
+  const off = document.body.classList.toggle("no-notes");
+  e.currentTarget.textContent = off ? "Show design notes" : "Hide design notes";
+});
+</script>
+</body>
+</html>

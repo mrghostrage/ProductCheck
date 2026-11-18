@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>StoreCheck</title>
+<style>
+  :root {
+    --bg: #f6f5f2; --card: #ffffff; --ink: #1b1b1a; --muted: #6b6a66; --line: #e6e4de;
+    --accent: #1f4fd6;
+    --bad: #c4321f; --bad-bg: #fdecea; --warn: #a76100; --warn-bg: #fff4e0;
+    --good: #1d7a43; --good-bg: #e7f5ec; --info: #5c5b57; --info-bg: #efeee9;
+    --radius: 14px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #141413; --card: #1d1d1b; --ink: #f1f0ec; --muted: #9c9a94; --line: #2e2d2a;
+      --accent: #7c9bff;
+      --bad: #ff7a66; --bad-bg: #3a1b16; --warn: #f3b453; --warn-bg: #33270f;
+      --good: #5fd08f; --good-bg: #13301f; --info: #b4b2ab; --info-bg: #262522;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink);
+    font: 16px/1.5 -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", sans-serif; }
+  main { max-width: 760px; margin: 0 auto; padding: 48px 16px 80px; }
+  h1 { font-size: 34px; letter-spacing: -0.02em; margin: 0 0 6px; }
+  .lede { color: var(--muted); margin: 0 0 24px; }
+  form { display: flex; gap: 8px; }
+  input { flex: 1; min-width: 0; font: inherit; padding: 14px 16px; border-radius: 12px;
+    border: 1px solid var(--line); background: var(--card); color: var(--ink); }
+  input:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
+  button { font: inherit; font-weight: 600; padding: 0 22px; border-radius: 12px; border: 0;
+    background: var(--ink); color: var(--bg); cursor: pointer; }
+  button:disabled { opacity: .5; cursor: wait; }
+  .hint { font-size: 13px; color: var(--muted); margin-top: 8px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; margin-top: 20px; }
+  .err { color: var(--bad); background: var(--bad-bg); border-color: transparent; }
+  .loading { display: flex; align-items: center; gap: 12px; color: var(--muted); }
+  .spin { width: 18px; height: 18px; border: 2px solid var(--line); border-top-color: var(--ink); border-radius: 50%; animation: s .8s linear infinite; }
+  @keyframes s { to { transform: rotate(360deg); } }
+
+  .head { display: flex; justify-content: space-between; gap: 16px; align-items: flex-start; flex-wrap: wrap; }
+  .site { font-size: 20px; font-weight: 650; margin: 0; word-break: break-word; }
+  .meta { color: var(--muted); font-size: 14px; }
+  .recheck { color: var(--accent); font-weight: 600; text-decoration: none; }
+  .verdict { padding: 8px 14px; border-radius: 999px; font-weight: 650; white-space: nowrap; }
+  .v-many { background: var(--bad-bg); color: var(--bad); }
+  .v-some { background: var(--warn-bg); color: var(--warn); }
+  .v-few { background: var(--good-bg); color: var(--good); }
+  .counts { display: flex; gap: 16px; margin-top: 14px; font-size: 14px; color: var(--muted); flex-wrap: wrap; }
+  .counts b { color: var(--ink); }
+
+  .group-title { font-size: 13px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin: 26px 0 8px; }
+  .sig { display: grid; grid-template-columns: 28px 1fr; gap: 12px; padding: 14px 0; border-top: 1px solid var(--line); }
+  .sig:first-of-type { border-top: 0; }
+  .dot { width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; font-size: 14px; font-weight: 700; }
+  .l-bad .dot { background: var(--bad-bg); color: var(--bad); }
+  .l-warn .dot { background: var(--warn-bg); color: var(--warn); }
+  .l-good .dot { background: var(--good-bg); color: var(--good); }
+  .l-info .dot, .l-error .dot { background: var(--info-bg); color: var(--info); }
+  .sig h3 { margin: 2px 0 2px; font-size: 15px; }
+  .sig p { margin: 0; color: var(--muted); font-size: 14.5px; }
+  .sig ul { margin: 6px 0 0; padding-left: 18px; font-size: 13.5px; color: var(--muted); }
+
+  .products { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+  .prod { border: 1px solid var(--line); border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; }
+  .prod img { width: 100%; aspect-ratio: 1; object-fit: cover; background: var(--info-bg); display: block; }
+  .prod .body { padding: 10px; font-size: 13px; display: flex; flex-direction: column; gap: 6px; flex: 1; }
+  .prod .t { font-weight: 600; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .prod .price s { color: var(--muted); margin-left: 4px; }
+  .prod .links { display: flex; gap: 8px; margin-top: auto; flex-wrap: wrap; }
+  .prod a { color: var(--accent); text-decoration: none; font-weight: 600; }
+  .prod .match { font-size: 12px; color: var(--bad); }
+  .note { font-size: 13px; color: var(--muted); margin-top: 10px; }
+  .disclaimer { font-size: 12.5px; color: var(--muted); margin-top: 28px; line-height: 1.55; }
+  @media (max-width: 520px) { form { flex-direction: column; } button { padding: 14px; } h1 { font-size: 28px; } }
+</style>
+</head>
+<body>
+<main>
+  <h1>StoreCheck</h1>
+  <p class="lede">Saw a product in an ad? Paste the store link and see the red flags before you buy.</p>
+  <form id="f">
+    <input id="u" type="text" inputmode="url" autocomplete="off" placeholder="Paste the link from the ad" autofocus>
+    <button id="go" type="submit">Check</button>
+  </form>
+  <div class="hint">Tip: on the ad, tap the link, then copy the URL from your browser. A product link works best.</div>
+  <div id="out"></div>
+  <p class="disclaimer">StoreCheck shows automated risk signals from public data (domain records, certificate logs and the store's own pages). It doesn't decide whether a business is legitimate. A new store can be honest, and an old one can still mislead. Use it as a starting point.</p>
+</main>
+<script>
+const $ = (s) => document.querySelector(s);
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const ICON = { bad: '!', warn: '!', good: '✓', info: 'i', error: '–' };
+const VERDICT = { many: 'Many red flags', some: 'Some red flags', few: 'Few red flags' };
+const GROUPS = [
+  ['bad', 'Red flags'], ['warn', 'Worth a closer look'], ['good', 'Looks fine'], ['info', 'Good to know'], ['error', "Couldn't check"],
+];
+
+$('#f').addEventListener('submit', (e) => {
+  e.preventDefault();
+  check(false);
+});
+
+function since(ts) {
+  const m = Math.round((Date.now() - ts) / 60000);
+  if (m < 1) return 'just now';
+  if (m < 60) return `${m} min ago`;
+  const h = Math.round(m / 60);
+  return `${h} hour${h === 1 ? '' : 's'} ago`;
+}
+
+async function check(fresh) {
+  const url = $('#u').value.trim();
+  if (!url) return;
+  $('#go').disabled = true;
+  $('#out').innerHTML = `<div class="card loading"><div class="spin"></div>Checking domain records, product catalog and store policies…</div>`;
+  try {
+    const res = await fetch('/api/check?url=' + encodeURIComponent(url) + (fresh ? '&fresh=1' : ''));
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Something went wrong.');
+    render(data);
+  } catch (err) {
+    $('#out').innerHTML = `<div class="card err">${esc(err.message)}</div>`;
+  } finally {
+    $('#go').disabled = false;
+  }
+}
+
+function render(d) {
+  const n = (l) => d.signals.filter((s) => s.level === l).length;
+  let html = `<div class="card">
+    <div class="head">
+      <div>
+        <p class="site">${esc(d.title)}</p>
+        <div class="meta">${esc(d.host)} · ${esc(d.platform)} store · ${d.cachedAt
+          ? `saved result from ${since(d.cachedAt)} · <a href="#" class="recheck" onclick="check(true);return false">Re-check</a>`
+          : `checked in ${(d.elapsedMs / 1000).toFixed(1)}s`}</div>
+      </div>
+      <div class="verdict v-${d.verdict}">${VERDICT[d.verdict]}</div>
+    </div>
+    <div class="counts"><span><b>${n('bad')}</b> red flags</span><span><b>${n('warn')}</b> to look at</span><span><b>${n('good')}</b> fine</span></div>`;
+
+  for (const [level, label] of GROUPS) {
+    const items = d.signals.filter((s) => s.level === level);
+    if (!items.length) continue;
+    html += `<div class="group-title">${label}</div>`;
+    for (const s of items) {
+      html += `<div class="sig l-${s.level}"><div class="dot">${ICON[s.level]}</div><div>
+        <h3>${esc(s.title)}</h3><p>${esc(s.summary)}</p>
+        ${s.details?.length ? `<ul>${s.details.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>` : ''}
+      </div></div>`;
+    }
+  }
+  html += `</div>`;
+
+  if (d.products?.length) {
+    html += `<div class="card"><div class="group-title" style="margin-top:0">Find these products cheaper elsewhere</div><div class="products">`;
+    for (const p of d.products) {
+      const lens = 'https://lens.google.com/uploadbyurl?url=' + encodeURIComponent(p.image);
+      const bing = 'https://www.bing.com/images/search?view=detailv2&iss=sbi&q=imgurl:' + encodeURIComponent(p.image);
+      const match = p.matches?.find((m) => m.price);
+      html += `<div class="prod">
+        <img src="${esc(p.image)}&width=400" alt="" loading="lazy" onerror="this.src='${esc(p.image)}'">
+        <div class="body">
+          <div class="t">${esc(p.title)}</div>
+          <div class="price">${p.price != null ? '$' + p.price.toFixed(2) : ''}${p.compareAt > p.price ? `<s>$${p.compareAt.toFixed(2)}</s>` : ''}</div>
+          ${match ? `<div class="match">${esc(match.source)}: ${esc(match.currency)}${esc(match.price)}</div>` : ''}
+          <div class="links"><a href="${lens}" target="_blank" rel="noopener">Google Lens ↗</a><a href="${bing}" target="_blank" rel="noopener">Bing ↗</a></div>
+        </div></div>`;
+    }
+    html += `</div>${d.reverseImageEnabled ? '' : '<div class="note">Automatic AliExpress/Temu price matching is off. Tap a link to search the image yourself.</div>'}</div>`;
+  }
+  $('#out').innerHTML = html;
+}
+</script>
+</body>
+</html>

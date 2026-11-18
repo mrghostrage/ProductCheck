@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>How We Check · Product Scanner</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@700;800&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar"><a class="brand" href="/">Product Scanner</a><nav><a href="/methodology" aria-current="page">How we check</a><a href="/corrections">Corrections</a></nav></div>
+
+  <header class="prose">
+    <div class="label">Methodology · US rules · last updated November 2026</div>
+    <h1>How we check products</h1>
+    <p class="lede">Exactly how every verdict and grade is decided, what we can't check, and what happens to your photos.</p>
+  </header>
+
+  <section class="prose">
+    <h2>What we read</h2>
+    <ul>
+      <li><b>Care labels, tags and stamps.</b> In the US, clothing labels must list fiber content and country of origin, so the label is our most trusted source. When the label and the listing disagree, the label leads.</li>
+      <li><b>Product listings.</b> The seller's page or a screenshot of it. This is where most marketing claims live.</li>
+      <li><b>Our shared database.</b> Once a product has been read, anyone who scans the same barcode sees the result instantly.</li>
+    </ul>
+  </section>
+
+  <section class="prose">
+    <h2>What the AI does, and doesn't do</h2>
+    <p>An AI model (Anthropic's Claude) reads the photo or page and copies out the facts: materials and percentages, origin wording, metal stamps and claims, word for word. It is told never to guess or fill in missing information.</p>
+    <p><b>The AI never decides a verdict.</b> Every verdict and grade below comes from fixed rules written in code, the same for every product, so the same facts always produce the same result.</p>
+  </section>
+
+  <section class="prose">
+    <h2>Claim verdicts</h2>
+    <dl class="defs">
+      <dt><span class="pill v-supported">Supported</span></dt><dd>The label or the listing's own details back the claim. Example: the listing says "cotton blend" and the label lists cotton.</dd>
+      <dt><span class="pill v-contradicted">Contradicted</span></dt><dd>A source we have in hand says otherwise. Example: "100% cotton" on the listing, "60% cotton, 40% polyester" on the label. We only use this verdict when we can show the conflicting source.</dd>
+      <dt><span class="pill v-misleading">Misleading wording</span></dt><dd>The words are allowed but suggest more than they mean, such as "gold plated" sold as gold or "cashmere feel" on acrylic. Each one cites the rule or guide it comes from.</dd>
+      <dt><span class="pill v-unverifiable">Can't verify</span></dt><dd>Checking it would need a lab test or documents we don't have. Quality, eco and safety claims usually land here. We say so instead of guessing.</dd>
+    </dl>
+  </section>
+
+  <section class="prose">
+    <h2>Origin grades</h2>
+    <p>A "Made in" label names the country of the last major manufacturing step, usually where the item was cut and sewn or assembled. It says nothing about where the fabric, leather or metal came from. We show five production stages and mark which ones are disclosed.</p>
+    <dl class="defs">
+      <dt><span class="pill g-full">Fully disclosed</span></dt><dd>Every stage is named, for example "100% Made in Italy."</dd>
+      <dt><span class="pill g-partial">Partly disclosed</span></dt><dd>Assembly plus where the main material came from.</dd>
+      <dt><span class="pill g-final_only">Final step only</span></dt><dd>Only a "Made in" country. Most products are here.</dd>
+      <dt><span class="pill g-none">Not disclosed</span></dt><dd>No country given, or just "Imported," which US rules allow online and in catalogs.</dd>
+      <dt><span class="pill g-contradicted">Contradicted</span></dt><dd>Two sources name different countries, for example the listing says Italy and the label says China.</dd>
+    </dl>
+    <p>"Designed in" and "Italian design" are not origin claims; we flag them as misleading wording when they appear without a "Made in" country.</p>
+  </section>
+
+  <section class="prose">
+    <h2>Sales wording we decode</h2>
+    <p class="muted">Loaded from the same rules the checker uses.</p>
+    <div class="scroll"><table><thead><tr><th>Wording</th><th>What it means</th><th>Source</th></tr></thead><tbody id="rules"><tr><td colspan="3" class="muted">Loading…</td></tr></tbody></table></div>
+  </section>
+
+  <section class="prose">
+    <h2>What we can't check yet</h2>
+    <ul>
+      <li>Anything that needs a lab: whether a ring is really 925 silver, or leather really full-grain.</li>
+      <li>Certificates: we list the ones mentioned but don't verify them with the issuer yet.</li>
+      <li>Recalls, counterfeits and chemicals: planned for a later version, worded as possible matches.</li>
+      <li>Pages that load their details with scripts or block automated reading. Upload a screenshot instead.</li>
+    </ul>
+  </section>
+
+  <section class="prose">
+    <h2>Your privacy</h2>
+    <ul>
+      <li><b>Photos are never stored.</b> A photo is read once to extract the facts, then discarded. Only the facts are kept, under the product's barcode.</li>
+      <li><b>Your personal rules stay on your phone.</b> Allergies, "vegan" and other preferences are checked on your device and never sent to us.</li>
+      <li>We don't sell data, and we don't run ads.</li>
+    </ul>
+  </section>
+
+  <section class="prose">
+    <h2>When we get it wrong</h2>
+    <p>Every fix to a published result is listed on the <a href="/corrections">corrections page</a> with its date and reason. Brands can respond with documents, which a person reviews. Brands can never pay to change a result.</p>
+  </section>
+
+  <footer><span>Product Scanner · working prototype</span><a href="/">Check a product</a><a href="/corrections">Corrections</a></footer>
+</div>
+<script type="module">
+import { esc } from "/report.js";
+fetch("/api/wording-rules").then((r) => r.json()).then(({ rules }) => {
+  document.getElementById("rules").innerHTML = rules.map((r) => `<tr><td><b>${esc(r.title)}</b></td><td>${esc(r.meaning)}</td><td class="src">${esc(r.source)}</td></tr>`).join("");
+}).catch(() => { document.getElementById("rules").innerHTML = `<tr><td colspan="3">Couldn't load the rules.</td></tr>`; });
+</script>
+</body>
+</html>

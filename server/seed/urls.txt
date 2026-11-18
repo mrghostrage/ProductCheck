@@ -1,0 +1,3 @@
+# Product pages to read before launch, one per line.
+# Check each retailer's terms of use first. The seeder obeys robots.txt and waits between requests.
+# Pages that carry a barcode (GTIN) in their structured data are saved under it, so scans match instantly.

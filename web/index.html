@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Product Scanner</title>
+<meta name="description" content="See what a product is really made of and where it's really from. Check a listing link, a screenshot or a care label.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@700;800&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar"><a class="brand" href="/">Product Scanner</a><nav><a href="/methodology">How we check</a><a href="/corrections">Corrections</a></nav></div>
+
+  <header class="prose">
+    <h1>See what it's really made of.</h1>
+    <p class="lede">Check a product before you buy. Paste a listing link, upload a screenshot, or snap the care label. Every flag shows its source.</p>
+  </header>
+
+  <section class="panel" aria-label="Check a product">
+    <div class="tabs" role="tablist">
+      <button role="tab" aria-selected="true" data-tab="link" id="tab-link">Paste a link</button>
+      <button role="tab" aria-selected="false" data-tab="photo" id="tab-photo">Upload a photo</button>
+      <button role="tab" aria-selected="false" data-tab="barcode" id="tab-barcode">Barcode number</button>
+    </div>
+
+    <form id="f-link" class="row" data-panel="link">
+      <input id="in-link" type="text" inputmode="url" autocomplete="off" placeholder="Paste a product link from any store" aria-label="Product link">
+      <button type="submit">Check</button>
+    </form>
+
+    <form id="f-photo" data-panel="photo" hidden>
+      <div class="row">
+        <label class="row" style="align-items:center;gap:6px"><input type="radio" name="kind" value="label" id="k-label" checked> Care label or tag</label>
+        <label class="row" style="align-items:center;gap:6px"><input type="radio" name="kind" value="screenshot" id="k-shot"> Listing screenshot</label>
+      </div>
+      <div class="row"><input id="in-photo" type="file" accept="image/*" aria-label="Photo"><button type="submit">Read it</button></div>
+      <p class="hint">Photos are read once and never stored. Some stores block link reading; a screenshot always works.</p>
+    </form>
+
+    <form id="f-barcode" class="row" data-panel="barcode" hidden>
+      <input id="in-barcode" type="text" inputmode="numeric" autocomplete="off" placeholder="12 or 13 digits under the barcode" aria-label="Barcode number">
+      <button type="submit">Look up</button>
+    </form>
+    <p class="hint" data-panel="barcode" hidden>Try a demo product: <a href="#" data-demo="2000000000046">Leather Tote</a>, <a href="#" data-demo="2000000000022">Everyday Tee</a>, <a href="#" data-demo="2000000000039">Gold Chain Necklace</a>.</p>
+  </section>
+
+  <div id="mode"></div>
+  <div id="out" aria-live="polite"></div>
+
+  <footer><span>Product Scanner · working prototype</span><a href="/methodology">How we check</a><a href="/corrections">Corrections</a></footer>
+</div>
+
+<script type="module">
+import { renderReport, esc } from "/report.js";
+const $ = (s) => document.querySelector(s);
+const out = $("#out");
+
+fetch("/api/health").then((r) => r.json()).then((h) => {
+  if (h.mode === "sample") $("#mode").innerHTML = `<div class="notice">Running in sample mode: no AI key is set on the server, so results use simple text matching or example data.</div>`;
+}).catch(() => {});
+
+for (const tab of document.querySelectorAll("[role=tab]")) {
+  tab.addEventListener("click", () => {
+    for (const t of document.querySelectorAll("[role=tab]")) t.setAttribute("aria-selected", t === tab);
+    for (const p of document.querySelectorAll("[data-panel]")) p.hidden = p.dataset.panel !== tab.dataset.tab;
+  });
+}
+
+async function run(promise, waiting) {
+  out.innerHTML = `<div class="panel"><span><span class="spin"></span>${esc(waiting)}</span></div>`;
+  for (const b of document.querySelectorAll("form button")) b.disabled = true;
+  try {
+    const res = await promise;
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || "Something went wrong.");
+    if (data.found === false) {
+      out.innerHTML = `<div class="panel"><h3>Not in the database yet</h3><p class="muted">Nobody has scanned this product. Upload a photo of its care label to add it.</p></div>`;
+      return;
+    }
+    out.innerHTML = renderReport(data.report);
+  } catch (e) {
+    out.innerHTML = `<div class="error">${esc(e.message)}</div>`;
+  } finally {
+    for (const b of document.querySelectorAll("form button")) b.disabled = false;
+  }
+}
+
+$("#f-link").addEventListener("submit", (e) => {
+  e.preventDefault();
+  const url = $("#in-link").value.trim();
+  if (!url) return;
+  run(fetch("/api/listing", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ url }) }), "Reading the listing…");
+});
+
+$("#f-barcode").addEventListener("submit", (e) => {
+  e.preventDefault();
+  const code = $("#in-barcode").value.replace(/\D/g, "");
+  if (code) run(fetch("/api/products/" + code), "Looking it up…");
+});
+for (const a of document.querySelectorAll("[data-demo]")) {
+  a.addEventListener("click", (e) => { e.preventDefault(); $("#in-barcode").value = a.dataset.demo; $("#f-barcode").requestSubmit(); });
+}
+
+// Shrink photos before sending: faster, cheaper, and enough detail to read a label.
+function toJpegBase64(file) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => {
+      const scale = Math.min(1, 1600 / Math.max(img.width, img.height));
+      const c = document.createElement("canvas");
+      c.width = Math.round(img.width * scale); c.height = Math.round(img.height * scale);
+      c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+      URL.revokeObjectURL(img.src);
+      resolve(c.toDataURL("image/jpeg", 0.85).split(",")[1]);
+    };
+    img.onerror = () => reject(new Error("That file isn't an image we can read."));
+    img.src = URL.createObjectURL(file);
+  });
+}
+
+$("#f-photo").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const file = $("#in-photo").files[0];
+  if (!file) { out.innerHTML = `<div class="error">Choose a photo first.</div>`; return; }
+  const kind = document.querySelector("input[name=kind]:checked").value;
+  try {
+    const imageBase64 = await toJpegBase64(file);
+    run(fetch("/api/label", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ kind, imageBase64, mediaType: "image/jpeg" }) }), kind === "label" ? "Reading the label…" : "Reading the screenshot…");
+  } catch (err) {
+    out.innerHTML = `<div class="error">${esc(err.message)}</div>`;
+  }
+});
+</script>
+</body>
+</html>

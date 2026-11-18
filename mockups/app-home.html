@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Home Redesign</title>
+<style>
+.phone {
+  --bg: #f2f2f7; --cell: #ffffff; --label: #000; --sec: rgb(60 60 67 / .6); --ter: rgb(60 60 67 / .3); --sep: rgb(60 60 67 / .14);
+  --fill: rgb(120 120 128 / .12);
+  --red: #ff3b30; --orange: #ff9500; --green: #34c759; --blue: #007aff; --gray: #8e8e93; --indigo: #5856d6; --teal: #30b0c7; --yellow: #ffcc00;
+  --shadow: 0 1px 2px rgb(0 0 0 / .04), 0 8px 24px -12px rgb(0 0 0 / .12);
+  --bar: rgb(255 255 255 / .7);
+}
+.phone.dark {
+  --bg: #000; --cell: #1c1c1e; --label: #fff; --sec: rgb(235 235 245 / .6); --ter: rgb(235 235 245 / .3); --sep: rgb(84 84 88 / .45);
+  --fill: rgb(120 120 128 / .24);
+  --red: #ff453a; --orange: #ff9f0a; --green: #30d158; --blue: #0a84ff; --gray: #8e8e93; --indigo: #5e5ce6; --teal: #40c8e0; --yellow: #ffd60a;
+  --shadow: none; --bar: rgb(30 30 32 / .7);
+}
+:root { --page: #e8e8ed; --page-ink: #1d1d1f; --page-sec: #6e6e73; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --page: #0b0b0c; --page-ink: #f5f5f7; --page-sec: #8e8e93; } }
+:root[data-theme="dark"] { --page: #0b0b0c; --page-ink: #f5f5f7; --page-sec: #8e8e93; }
+
+* { box-sizing: border-box; margin: 0; }
+body { background: var(--page); color: var(--page-ink); font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif; padding: 40px 16px 64px; -webkit-font-smoothing: antialiased; }
+h1 { text-align: center; font: 700 28px/1.1 -apple-system, "SF Pro Display", sans-serif; letter-spacing: -.02em; margin-bottom: 36px; }
+.stage { display: flex; gap: 40px; flex-wrap: wrap; justify-content: center; }
+.shot { display: flex; flex-direction: column; align-items: center; gap: 18px; }
+.cap { font-size: 13px; color: var(--page-sec); }
+
+.phone { width: 402px; height: 874px; border-radius: 62px; position: relative; overflow: hidden; background: #000; color: var(--label); flex: none;
+  box-shadow: 0 0 0 10px #1a1a1c, 0 0 0 11.5px #48484c, 0 40px 80px -30px rgb(0 0 0 / .5); font-size: 17px; letter-spacing: -.41px; }
+@media (max-width: 460px) { .phone { transform: scale(.86); transform-origin: top center; margin-bottom: -122px; } }
+.island { position: absolute; top: 11px; left: 50%; translate: -50% 0; width: 124px; height: 36px; border-radius: 20px; background: #000; z-index: 40; }
+.status { position: absolute; inset: 0 0 auto; height: 54px; display: flex; justify-content: space-between; align-items: center; padding: 4px 36px 0 52px; font-weight: 600; z-index: 35; color: #fff; }
+.status .i { display: flex; gap: 6px; align-items: center; }
+.homebar { position: absolute; bottom: 8px; left: 50%; translate: -50% 0; width: 140px; height: 5px; border-radius: 3px; background: var(--label); z-index: 40; }
+
+/* Camera */
+.cam { position: absolute; inset: 0 0 auto; height: 430px; overflow: hidden;
+  background:
+    radial-gradient(40% 30% at 52% 46%, #6b5a4a 0%, transparent 70%),
+    radial-gradient(60% 50% at 30% 70%, #3b342e 0%, transparent 70%),
+    radial-gradient(50% 40% at 80% 20%, #2c2f33 0%, transparent 70%),
+    #1b1c1e; }
+.cam::after { content: ""; position: absolute; inset: 0; backdrop-filter: blur(2px); }
+.glassd { background: rgb(255 255 255 / .16); backdrop-filter: blur(20px) saturate(1.6); -webkit-backdrop-filter: blur(20px) saturate(1.6); box-shadow: inset 0 0 0 .5px rgb(255 255 255 / .3); color: #fff; }
+.topctl { position: absolute; top: 60px; left: 16px; right: 16px; display: flex; justify-content: space-between; align-items: center; z-index: 5; }
+.capsule { display: inline-flex; align-items: center; gap: 7px; height: 36px; padding: 0 14px; border-radius: 18px; font-size: 14px; font-weight: 600; }
+.capsule i { width: 7px; height: 7px; border-radius: 50%; background: #ffd60a; }
+.circ { width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; }
+.circ svg { width: 20px; height: 20px; }
+.vf { position: absolute; left: 70px; right: 70px; top: 136px; height: 104px; z-index: 2; }
+.vf span { position: absolute; width: 30px; height: 30px; border: 0 solid #fff; }
+.vf span:nth-child(1) { top: 0; left: 0; border-top-width: 3.5px; border-left-width: 3.5px; border-top-left-radius: 14px; }
+.vf span:nth-child(2) { top: 0; right: 0; border-top-width: 3.5px; border-right-width: 3.5px; border-top-right-radius: 14px; }
+.vf span:nth-child(3) { bottom: 0; left: 0; border-bottom-width: 3.5px; border-left-width: 3.5px; border-bottom-left-radius: 14px; }
+.vf span:nth-child(4) { bottom: 0; right: 0; border-bottom-width: 3.5px; border-right-width: 3.5px; border-bottom-right-radius: 14px; }
+.vf .scanline { position: absolute; left: 14px; right: 14px; top: 50%; height: 2px; border-radius: 1px; background: linear-gradient(90deg, transparent, #fff, transparent); opacity: .7; }
+.hint { position: absolute; top: 264px; left: 50%; translate: -50% 0; white-space: nowrap; z-index: 5; }
+.ctl { position: absolute; top: 314px; left: 0; right: 0; display: flex; justify-content: center; align-items: center; z-index: 5; }
+.ctl .side { position: absolute; left: 44px; }
+.ctl .side.r { left: auto; right: 44px; }
+.shutter { width: 74px; height: 74px; border-radius: 50%; border: 4px solid #fff; display: grid; place-items: center; }
+.shutter i { width: 60px; height: 60px; border-radius: 50%; background: #fff; }
+
+/* Sheet */
+.sheet { position: absolute; left: 0; right: 0; top: 408px; bottom: 0; background: var(--bg); border-radius: 34px 34px 0 0; z-index: 10; overflow: hidden; }
+.sheet .in { height: 100%; overflow-y: auto; scrollbar-width: none; padding: 8px 16px 130px; }
+.sheet .in::-webkit-scrollbar { display: none; }
+.grab { width: 36px; height: 5px; border-radius: 3px; background: var(--ter); margin: 0 auto 14px; }
+.sh { font: 700 22px/1.2 -apple-system, "SF Pro Display", sans-serif; letter-spacing: .35px; margin: 0 4px 12px; display: flex; justify-content: space-between; align-items: baseline; }
+.sh small { font: 400 17px -apple-system, sans-serif; color: var(--blue); letter-spacing: -.41px; }
+.sh + .sh, .gap { margin-top: 26px; }
+
+.field { display: flex; align-items: center; gap: 8px; height: 50px; padding: 0 6px 0 14px; border-radius: 14px; background: var(--cell); box-shadow: var(--shadow); }
+.phone.dark .field { background: var(--cell); }
+.field svg { width: 18px; height: 18px; color: var(--sec); flex: none; }
+.field span { flex: 1; color: var(--ter); }
+.field b { height: 38px; padding: 0 16px; border-radius: 19px; background: var(--blue); color: #fff; font-size: 15px; display: grid; place-items: center; }
+.alt { margin: 10px 4px 0; font-size: 15px; color: var(--sec); }
+.alt a { color: var(--blue); text-decoration: none; }
+
+/* Recent cards */
+.recents { display: flex; gap: 12px; overflow-x: auto; scrollbar-width: none; margin: 0 -16px; padding: 2px 16px 6px; scroll-snap-type: x mandatory; }
+.recents::-webkit-scrollbar { display: none; }
+.rc { flex: none; width: 148px; border-radius: 22px; padding: 14px; display: flex; flex-direction: column; gap: 10px; background: var(--cell); box-shadow: var(--shadow); scroll-snap-align: start; position: relative; }
+.rc.red { background: linear-gradient(160deg, color-mix(in srgb, var(--red) 13%, var(--cell)), var(--cell) 70%); }
+.rc.orange { background: linear-gradient(160deg, color-mix(in srgb, var(--orange) 15%, var(--cell)), var(--cell) 70%); }
+.rc.green { background: linear-gradient(160deg, color-mix(in srgb, var(--green) 14%, var(--cell)), var(--cell) 70%); }
+.mini { position: relative; width: 52px; height: 52px; }
+.mini svg { position: absolute; inset: 0; transform: rotate(-90deg); }
+.mini b { position: absolute; inset: 0; display: grid; place-items: center; font-size: 20px; font-weight: 700; }
+.mini b svg { position: static; transform: none; width: 20px; height: 20px; }
+.rc .nm { font-size: 15px; font-weight: 600; line-height: 1.2; letter-spacing: -.24px; min-height: 36px; }
+.rc .rs { font-size: 13px; font-weight: 600; }
+.rc .tm { position: absolute; top: 16px; right: 14px; font-size: 12px; color: var(--sec); }
+
+/* Inset list */
+.list { background: var(--cell); border-radius: 22px; overflow: hidden; box-shadow: var(--shadow); }
+.row { display: flex; align-items: center; gap: 12px; padding: 0 16px; min-height: 56px; position: relative; }
+.row + .row::before { content: ""; position: absolute; top: 0; right: 0; left: 58px; height: .5px; background: var(--sep); }
+.tile { width: 30px; height: 30px; border-radius: 8px; display: grid; place-items: center; color: #fff; flex: none; }
+.tile svg { width: 17px; height: 17px; }
+.row .t { flex: 1; }
+.row .t small { display: block; font-size: 13px; color: var(--sec); margin-top: 1px; }
+.chev { width: 8px; height: 14px; color: var(--ter); flex: none; }
+
+/* Empty state */
+.welcome { background: var(--cell); border-radius: 22px; padding: 22px 18px; display: flex; gap: 14px; align-items: center; box-shadow: var(--shadow); }
+.welcome .ic { width: 48px; height: 48px; border-radius: 14px; display: grid; place-items: center; color: #fff; flex: none; background: linear-gradient(160deg, #4ea1ff, var(--blue)); }
+.welcome .ic svg { width: 26px; height: 26px; }
+.welcome b { display: block; font-size: 17px; }
+.welcome span { font-size: 15px; color: var(--sec); }
+
+/* Floating glass tab bar */
+.tabs { position: absolute; bottom: 26px; left: 50%; translate: -50% 0; display: flex; gap: 4px; padding: 5px; border-radius: 34px; z-index: 30;
+  background: var(--bar); backdrop-filter: blur(24px) saturate(1.8); -webkit-backdrop-filter: blur(24px) saturate(1.8); box-shadow: inset 0 0 0 .5px var(--sep), 0 10px 30px -12px rgb(0 0 0 / .3); }
+.tab { width: 104px; height: 56px; border-radius: 28px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; font-size: 11px; font-weight: 600; color: var(--label); }
+.tab svg { width: 24px; height: 24px; }
+.tab.on { background: var(--fill); color: var(--blue); }
+</style>
+</head>
+<body>
+<h1>Scan</h1>
+<div class="stage">
+  <div class="shot"><div class="phone" data-v="recent"></div><div class="cap">With recent checks</div></div>
+  <div class="shot"><div class="phone" data-v="first"></div><div class="cap">First launch</div></div>
+  <div class="shot"><div class="phone dark" data-v="recent"></div><div class="cap">Dark</div></div>
+</div>
+
+<template id="tpl">
+  <div class="island"></div>
+  <div class="status"><span>9:41</span><span class="i">
+    <svg width="18" height="12" viewBox="0 0 18 12" fill="currentColor"><rect y="8" width="3" height="4" rx="1"/><rect x="5" y="5.5" width="3" height="6.5" rx="1"/><rect x="10" y="3" width="3" height="9" rx="1"/><rect x="15" width="3" height="12" rx="1"/></svg>
+    <svg width="16" height="12" viewBox="0 0 17 12" fill="currentColor"><path d="M8.5 2.3c2.4 0 4.6.9 6.2 2.5l1.2-1.2C14 1.6 11.4.5 8.5.5S3 1.6 1.1 3.6l1.2 1.2C3.9 3.2 6.1 2.3 8.5 2.3zm0 3.5c1.4 0 2.7.5 3.7 1.4l1.2-1.2c-1.3-1.2-3-1.9-4.9-1.9s-3.6.7-4.9 1.9l1.2 1.2c1-.9 2.3-1.4 3.7-1.4zm0 3.4c.5 0 1 .2 1.3.5L8.5 11 7.2 9.7c.3-.3.8-.5 1.3-.5z"/></svg>
+    <svg width="27" height="13" viewBox="0 0 27 13"><rect x=".5" y=".5" width="23" height="12" rx="3.8" fill="none" stroke="currentColor" opacity=".35"/><rect x="2" y="2" width="20" height="9" rx="2.4" fill="currentColor"/><path d="M25 4.5v4c.8-.3 1.3-1.1 1.3-2s-.5-1.7-1.3-2z" fill="currentColor" opacity=".4"/></svg>
+  </span></div>
+
+  <div class="cam">
+    <div class="topctl">
+      <span class="capsule glassd"><i></i>Sample Data</span>
+      <span class="circ glassd"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 2h8v3l-2 3v13a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1V8L8 5z"/></svg></span>
+    </div>
+    <div class="vf"><span></span><span></span><span></span><span></span><div class="scanline"></div></div>
+    <span class="capsule glassd hint">Point at a barcode or care label</span>
+    <div class="ctl">
+      <span class="circ glassd side"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="3"/><circle cx="9" cy="10" r="1.6" fill="currentColor"/><path d="m21 16-5-5-8 8"/></svg></span>
+      <span class="shutter"><i></i></span>
+    </div>
+  </div>
+
+  <div class="sheet"><div class="in"></div></div>
+
+  <div class="tabs">
+    <span class="tab on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 8V5.5A1.5 1.5 0 0 1 5.5 4H8M16 4h2.5A1.5 1.5 0 0 1 20 5.5V8M20 16v2.5a1.5 1.5 0 0 1-1.5 1.5H16M8 20H5.5A1.5 1.5 0 0 1 4 18.5V16"/><path d="M8 9v6M11 9v6M14 9v6M17 9v6" stroke-width="1.7"/></svg>Scan</span>
+    <span class="tab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2.2"/><circle cx="10" cy="17" r="2.2"/></svg>My Rules</span>
+  </div>
+  <div class="homebar"></div>
+</template>
+
+<script>
+const S = {
+  link: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1"/><path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1"/></svg>',
+  chev: '<svg class="chev" viewBox="0 0 8 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 1l6 6-6 6"/></svg>',
+  bag: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 8.5h15l-1.2 11a1.5 1.5 0 0 1-1.5 1.3H7.2a1.5 1.5 0 0 1-1.5-1.3z"/><path d="M8.5 8.5V7a3.5 3.5 0 0 1 7 0v1.5"/></svg>',
+  tee: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8.5 3 3 6l2 4.5 2.5-1V21h9V9.5l2.5 1L21 6l-5.5-3a3.5 3.5 0 0 1-7 0z"/></svg>',
+  spark: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2 6.5L20.5 10 14 12l-2 6.5L10 12 3.5 10 10 8.5z"/><path d="M19 15l.9 2.6 2.6.9-2.6.9L19 22l-.9-2.6-2.6-.9 2.6-.9z"/></svg>',
+  knit: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3 3 6l1.5 5L7 10v11h10V10l2.5 1L21 6l-5-3c-.5 1.8-2 3-4 3s-3.5-1.2-4-3z"/><path d="M7 15h10" /></svg>',
+  check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7"/></svg>',
+  wave: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 8V5.5A1.5 1.5 0 0 1 5.5 4H8M16 4h2.5A1.5 1.5 0 0 1 20 5.5V8M20 16v2.5a1.5 1.5 0 0 1-1.5 1.5H16M8 20H5.5A1.5 1.5 0 0 1 4 18.5V16"/><path d="M8 9v6M11 9v6M14 9v6M17 9v6" stroke-width="1.7"/></svg>',
+};
+
+// Mini issue ring: segments as [fraction, color].
+function ring(segs, center) {
+  const r = 22, C = 2 * Math.PI * r; let at = 0;
+  const arcs = segs.map(([f, col]) => { const len = Math.max(0, f * C - (segs.length > 1 ? 6 : 0)); const s = `<circle cx="26" cy="26" r="${r}" fill="none" stroke="${col}" stroke-width="6" stroke-linecap="round" stroke-dasharray="${len} ${C}" stroke-dashoffset="${-at * C}"/>`; at += f; return s; }).join("");
+  return `<div class="mini"><svg width="52" height="52" viewBox="0 0 52 52"><circle cx="26" cy="26" r="${r}" fill="none" stroke="var(--fill)" stroke-width="6"/>${arcs}</svg><b>${center}</b></div>`;
+}
+
+const RECENT = [
+  { tone: "red", name: "Leather Tote", result: "2 Issues", time: "2m", ring: ring([[.5, "var(--red)"], [.5, "color-mix(in srgb, var(--red) 45%, transparent)"]], "2") },
+  { tone: "red", name: "Everyday Tee", result: "1 Issue", time: "1h", ring: ring([[.34, "var(--red)"], [.66, "color-mix(in srgb, var(--red) 45%, transparent)"]], "1") },
+  { tone: "green", name: "Knit Sweater", result: "Checks Out", time: "Mon", ring: ring([[1, "var(--green)"]], `<span style="color:var(--green);display:grid">${S.check}</span>`) },
+];
+const DEMOS = [
+  { name: "Leather Tote", sub: "Origin mismatch", icon: S.bag, bg: "var(--orange)" },
+  { name: "Everyday Tee", sub: "False claim", icon: S.tee, bg: "var(--blue)" },
+  { name: "Gold Necklace", sub: "Metal stamps", icon: S.spark, bg: "var(--yellow)" },
+  { name: "Knit Sweater", sub: "Fiber blend", icon: S.knit, bg: "var(--indigo)" },
+];
+
+const linkBlock = `
+  <div class="sh">Shopping Online?</div>
+  <div class="field">${S.link}<span>Paste a product link</span><b>Paste</b></div>
+  <p class="alt">Store won't load? <a href="#">Use a Screenshot</a></p>`;
+const recentBlock = `
+  <div class="sh gap">Recent <small>See All</small></div>
+  <div class="recents">${RECENT.map((r) => `
+    <div class="rc ${r.tone}">${r.ring}<span class="tm">${r.time}</span>
+      <div class="nm">${r.name}</div>
+      <div class="rs" style="color:var(--${r.tone})">${r.result}</div>
+    </div>`).join("")}</div>`;
+const demoList = (rows) => `<div class="list">${rows.map((d) => `
+  <div class="row"><span class="tile" style="background:${d.bg}">${d.icon}</span><span class="t">${d.name}<small>${d.sub}</small></span>${S.chev}</div>`).join("")}</div>`;
+
+const views = {
+  recent: linkBlock + recentBlock + `<div class="sh gap">Try a Demo</div>` + demoList(DEMOS.slice(0, 3)),
+  first: `
+    <div class="welcome"><span class="ic">${S.wave}</span><div><b>Scan Your First Product</b><span>Point at a barcode or care label.</span></div></div>
+    <div class="gap"></div>` + linkBlock + `<div class="sh gap">Try a Demo</div>` + demoList(DEMOS),
+};
+
+const tpl = document.getElementById("tpl");
+for (const p of document.querySelectorAll(".phone")) {
+  p.appendChild(tpl.content.cloneNode(true));
+  const inner = p.querySelector(".sheet .in");
+  inner.innerHTML = `<div class="grab"></div>` + views[p.dataset.v];
+}
+</script>
+</body>
+</html>

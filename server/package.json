@@ -1,0 +1,28 @@
+{
+  "name": "product-scanner-server",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "NODE_OPTIONS=--disable-warning=ExperimentalWarning tsx watch src/index.ts",
+    "start": "NODE_OPTIONS=--disable-warning=ExperimentalWarning tsx src/index.ts",
+    "test": "NODE_OPTIONS=--disable-warning=ExperimentalWarning tsx --test test/*.test.ts",
+    "typecheck": "tsc --noEmit",
+    "seed": "NODE_OPTIONS=--disable-warning=ExperimentalWarning tsx scripts/seed.ts",
+    "seed:demo": "NODE_OPTIONS=--disable-warning=ExperimentalWarning tsx scripts/seed-demo.ts",
+    "correction": "NODE_OPTIONS=--disable-warning=ExperimentalWarning tsx scripts/add-correction.ts"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^1.10.0",
+    "@hono/node-server": "^2.1.9",
+    "hono": "^4.13.19",
+    "robots-parser": "^3.0.1",
+    "undici": "^7.30.2",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.6",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2"
+  }
+}

@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Corrections · Product Scanner</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@700;800&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar"><a class="brand" href="/">Product Scanner</a><nav><a href="/methodology">How we check</a><a href="/corrections" aria-current="page">Corrections</a></nav></div>
+  <header class="prose">
+    <div class="label">Corrections log</div>
+    <h1>Corrections</h1>
+    <p class="lede">Every change we make to a published result, newest first, with what changed and why.</p>
+  </header>
+  <section class="panel">
+    <div class="scroll"><table><thead><tr><th>Date</th><th>Product</th><th>What changed</th><th>Why</th></tr></thead><tbody id="rows"><tr><td colspan="4" class="muted">Loading…</td></tr></tbody></table></div>
+  </section>
+  <p class="muted">Spotted a mistake? Tell us which product and what's wrong; a person reviews every report.</p>
+  <footer><span>Product Scanner · working prototype</span><a href="/">Check a product</a><a href="/methodology">How we check</a></footer>
+</div>
+<script type="module">
+import { esc } from "/report.js";
+const rows = document.getElementById("rows");
+fetch("/api/corrections").then((r) => r.json()).then(({ corrections }) => {
+  rows.innerHTML = corrections.length
+    ? corrections.map((c) => `<tr><td class="src">${esc(c.date)}</td><td>${esc(c.product)}</td><td>${esc(c.what)}</td><td class="muted">${esc(c.why)}</td></tr>`).join("")
+    : `<tr><td colspan="4" class="muted">No corrections yet. When we change a published result, it will appear here.</td></tr>`;
+}).catch(() => { rows.innerHTML = `<tr><td colspan="4">Couldn't load corrections.</td></tr>`; });
+</script>
+</body>
+</html>
